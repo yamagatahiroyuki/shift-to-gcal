@@ -10,6 +10,9 @@ pdftotext -layout manabu2025-11-ocr.pdf exported_2025-11.txt
 初回だけ sudo apt install -y poppler-utils を入れておけばOKです（もう入っています）。
 
 3) CSVを生成（Googleカレンダー用）
+テキストをshift-to-gcalに移す。
+
+cd ~/projects/shift-to-gcal
 python3 shift_pdf_to_gcal.py \
   --text exported_2025-11.txt \
   --name "山縣洋之" \
