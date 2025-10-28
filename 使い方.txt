@@ -1,0 +1,63 @@
+1) PDFを保存
+
+~/ダウンロード に 例：manabu2025-11-ocr.pdf として保存します。
+
+2) PDF → TXT（レイアウト保持）
+cd ~/ダウンロード
+pdftotext -layout manabu2025-11-ocr.pdf exported_2025-11.txt
+
+
+初回だけ sudo apt install -y poppler-utils を入れておけばOKです（もう入っています）。
+
+3) CSVを生成（Googleカレンダー用）
+python3 shift_pdf_to_gcal.py \
+  --text exported_2025-11.txt \
+  --name "山縣洋之" \
+  --subject "福原学" \
+  --year 2025 --month 11 \
+  --output fukuhara_2025_11.csv
+
+
+出力CSVの列：Subject,Start Date,Start Time（UTF-8/BOMなし）
+
+4) Googleカレンダーにインポート
+
+カレンダー左「その他のカレンダー → インポート」から fukuhara_2025_11.csv を指定します。
+
+予防メモ（TIPS）
+
+名前が見つからない時：OCRで「縣→県」「全角スペース」になることがあるため、
+--name "山県洋之" や --name "山縣 洋之" でも試すと通ります。
+
+PDFから直接やる（TXT省略したい場合）：
+
+python3 shift_pdf_to_gcal.py \
+  --input manabu2025-11-ocr.pdf \
+  --name "山縣洋之" \
+  --subject "福原学" \
+  --year 2025 --month 11 \
+  --output fukuhara_2025_11.csv
+
+
+※ うまくいかない時は、TXTにして実行が確実です。
+
+ワンクリック化（任意）
+
+毎月のコマンドを1本化するなら、run_2025_11.sh を作って実行権を付けます。
+
+#!/usr/bin/env bash
+set -e
+cd ~/ダウンロード
+PDF="manabu2025-11-ocr.pdf"
+TXT="exported_2025-11.txt"
+OUT="fukuhara_2025_11.csv"
+pdftotext -layout "$PDF" "$TXT"
+python3 shift_pdf_to_gcal.py --text "$TXT" --name "山縣洋之" --subject "福原学" --year 2025 --month 11 --output "$OUT"
+echo "できました → $OUT"
+
+chmod +x run_2025_11.sh
+./run_2025_11.sh
+
+
+必要なら「複数名まとめて出力する版」や「ファイル名から自動で年/月を取得する版」に拡張しておきます。
+このままでも回せますが、さらに時短したいなら言ってください。
